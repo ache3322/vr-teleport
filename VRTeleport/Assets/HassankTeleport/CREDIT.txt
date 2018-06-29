@@ -1,0 +1,3 @@
+All credits go to Hassank. Check out his implementation for the Oculus Go / GearVR teleportation
+
+Link: https://github.com/FusedVR/GearTeleporter
