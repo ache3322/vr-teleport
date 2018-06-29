@@ -10,5 +10,5 @@ Oculus SDK is included within the Unity project.
 Download the Unity asset for Oculus SDK: https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022
 
 ## Sources / Credits
-https://developer.oculus.com/blog/teleport-curves-with-the-gear-vr-controller/
-https://github.com/FusedVR/GearTeleporter
+- https://developer.oculus.com/blog/teleport-curves-with-the-gear-vr-controller/
+- https://github.com/FusedVR/GearTeleporter
