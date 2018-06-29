@@ -18,14 +18,23 @@ namespace VarLab.Teleport
     {
         public Material m;
 
+        private Material _matInstance;
         private Vector2 uvAnimationRate = new Vector2(-2.0f, 0.0f);
         private string textureName = "_MainTex";
         private Vector2 uvOffset = Vector2.zero;
 
+
+        void Start()
+        {
+            // Get local copy of bezier material
+            _matInstance = GetComponent<Renderer>().material;
+        }
+
+
         void LateUpdate()
         {
             uvOffset += (Time.deltaTime * uvAnimationRate);
-            m.SetTextureOffset(textureName, uvOffset);
+            _matInstance.SetTextureOffset(textureName, uvOffset);
         }
     }
 }
