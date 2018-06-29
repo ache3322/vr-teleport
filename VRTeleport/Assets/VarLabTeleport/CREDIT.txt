@@ -1,0 +1,19 @@
+﻿#############
+## Credits ##
+#############
+
+Gear VR Teleporter
+------------------
+Credit to Hassank for the implementation of the GearVR teleportation. This
+package uses his implementation and has been modified for the purpose of experimentation.
+
+Visit: https://github.com/FusedVR/GearTeleporter
+
+
+##################
+# Implementation #
+##################
+Using the left Oculus Touch controller, if the 'y' button is pressed twice (in quick succession)
+it will activate "teleporation" mode. Use the left primary trigger to teleport.
+
+Modifications have been made to the teleportation sprite.
