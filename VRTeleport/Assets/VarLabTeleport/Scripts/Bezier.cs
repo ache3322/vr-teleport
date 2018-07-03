@@ -18,6 +18,7 @@ namespace VarLab.Teleport
     public class Bezier : MonoBehaviour
     {
         public bool endPointDetected;
+        public BezierType bezierType;
 
         /// <summary>
         /// The endpoint vector of the bezier curve.
@@ -55,6 +56,7 @@ namespace VarLab.Teleport
             extendStep = 5f;
             extensionFactor = 0.1f;
 
+            bezierType = BezierType.Quadratic;
             forwardProjectionExtend = 0.0f;
         }
 
@@ -116,7 +118,14 @@ namespace VarLab.Teleport
                 }
                 else
                 {
-                    nextPosition = CalculateBezierPoint(t, controlPoints[0], controlPoints[1], controlPoints[2]);
+                    if (this.bezierType == BezierType.Linear)
+                    {
+                        nextPosition = CalculateLinearBezierPoint(t, controlPoints[0], controlPoints[1]);
+                    }
+                    else if (this.bezierType == BezierType.Quadratic)
+                    {
+                        nextPosition = CalculateBezierPoint(t, controlPoints[0], controlPoints[1], controlPoints[2]);
+                    }
                 }
 
                 if (CheckColliderIntersection(prevPosition, nextPosition))
@@ -156,6 +165,21 @@ namespace VarLab.Teleport
 
 
         /// <summary>
+        /// Calculates a point on the bezier curve using the linear
+        /// Bezier curve equation.
+        /// </summary>
+        /// <param name="t">Where t is the amount of segments divided by time.</param>
+        /// <param name="p0">Control point 1</param>
+        /// <param name="p1">Control point 2</param>
+        /// <returns>Returns a Vector3.</returns>
+        Vector3 CalculateLinearBezierPoint(float t, Vector3 p0, Vector3 p1)
+        {
+            // B(t) = p0 + t(p1 - p0)
+            return p0 + t * (p1 - p0);
+        }
+
+
+        /// <summary>
         /// Calculates a point on the bezier curve using the
         /// Quadratic Bezier curve equation.
         /// <para/>
@@ -179,4 +203,13 @@ namespace VarLab.Teleport
                 Mathf.Pow(t, 2) * p2;
         }
     }
+
+    /// <summary>
+    /// Type of Bezier curve.
+    /// </summary>
+    public enum BezierType
+    {
+        Linear = 0,
+        Quadratic = 1
+    };
 }
