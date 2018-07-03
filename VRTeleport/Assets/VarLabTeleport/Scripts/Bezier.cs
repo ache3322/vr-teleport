@@ -4,6 +4,16 @@ using System.Collections.Generic;
 namespace VarLab.Teleport
 {
     /// <summary>
+    /// Type of Bezier curve.
+    /// </summary>
+    public enum BezierType
+    {
+        Linear = 0,
+        Quadratic = 1
+    };
+
+
+    /// <summary>
     /// The <see cref="Bezier"/> class contains logic to calculate values
     /// for the Quadratic Bezier curve.
     /// <para/>
@@ -120,11 +130,11 @@ namespace VarLab.Teleport
                 {
                     if (this.bezierType == BezierType.Linear)
                     {
-                        nextPosition = CalculateLinearBezierPoint(t, controlPoints[0], controlPoints[1]);
+                        nextPosition = BezierStatic.GetLinearBezierPoint(t, controlPoints[0], controlPoints[1]);
                     }
                     else if (this.bezierType == BezierType.Quadratic)
                     {
-                        nextPosition = CalculateBezierPoint(t, controlPoints[0], controlPoints[1], controlPoints[2]);
+                        nextPosition = BezierStatic.GetQuadraticBezierPoint(t, controlPoints[0], controlPoints[1], controlPoints[2]);
                     }
                 }
 
@@ -162,17 +172,30 @@ namespace VarLab.Teleport
 
             return false;
         }
+    }
 
 
+    /// <summary>
+    /// Purpose: To generate a bezier curve between at least 4 points in space and draw
+    /// a number of spheres across the generated curve.
+    /// <para/>
+    /// This script is heavily based on the tutorial at: 
+    /// http://catlikecoding.com/unity/tutorials/curves-and-splines/
+    /// </summary>
+    /// <remarks>
+    /// Credit to VRTK for inspiration in implementing static Bezier class.
+    /// https://vrtoolkit.readme.io/
+    /// </remarks>
+    public static class BezierStatic
+    {
         /// <summary>
-        /// Calculates a point on the bezier curve using the linear
-        /// Bezier curve equation.
+        /// Calculates a point on the bezier curve using the linear Bezier curve equation.
         /// </summary>
         /// <param name="t">Where t is the amount of segments divided by time.</param>
         /// <param name="p0">Control point 1</param>
         /// <param name="p1">Control point 2</param>
         /// <returns>Returns a Vector3.</returns>
-        Vector3 CalculateLinearBezierPoint(float t, Vector3 p0, Vector3 p1)
+        public static Vector3 GetLinearBezierPoint(float t, Vector3 p0, Vector3 p1)
         {
             // B(t) = p0 + t(p1 - p0)
             return p0 + t * (p1 - p0);
@@ -185,31 +208,31 @@ namespace VarLab.Teleport
         /// <para/>
         /// https://en.wikipedia.org/wiki/B%C3%A9zier_curve
         /// <para/>
-        /// Credit to: Hassank
-        /// <para/>
-        /// Modified by: Austin Che
         /// </summary>
         /// <param name="t">Where t the amount of segments divided by time.</param>
         /// <param name="p0">Control point 1</param>
         /// <param name="p1">Control point 2</param>
         /// <param name="p2">Control point 3</param>
         /// <returns>Returns a Vector3.</returns>
-        Vector3 CalculateBezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2)
+        public static Vector3 GetQuadraticBezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2)
         {
             // B(t) = [(1 - t)^2 * p0] + [2(1 - t) * t * p1] + [t^2 * p2]
-            return
-                Mathf.Pow((1f - t), 2) * p0 +
-                2f * (1f - t) * t * p1 +
-                Mathf.Pow(t, 2) * p2;
+            t = Mathf.Clamp01(t);
+            float oneMinusT = 1f - t;
+            float oneMinusTSquared = oneMinusT * oneMinusT;
+            float tSquared = t * t;
+
+            var result =
+                oneMinusTSquared * p0 +
+                2 * oneMinusT * t * p1 +
+                tSquared * p2;
+
+            return result;
+
+            // OLD
+            //Mathf.Pow((1f - t), 2) * p0 +
+            //2f * (1f - t) * t * p1 +
+            //Mathf.Pow(t, 2) * p2;
         }
     }
-
-    /// <summary>
-    /// Type of Bezier curve.
-    /// </summary>
-    public enum BezierType
-    {
-        Linear = 0,
-        Quadratic = 1
-    };
 }
