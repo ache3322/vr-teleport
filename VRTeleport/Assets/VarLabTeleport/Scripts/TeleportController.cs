@@ -19,33 +19,46 @@ namespace VarLab.Teleport
     /// </summary>
     public class TeleportController : MonoBehaviour
     {
-        public bool TeleportEnabled
-        {
-            get { return teleportEnabled; }
-        }
+        [Header("Activation Settings")]
+
+        [Tooltip("The button used to execute the activate action.")]
+        public OVRInput.Button activationButton = OVRInput.Button.Four;
+
+        [Header("Selection Settings")]
+
+        [Tooltip("The button used to execute the select the action.")]
+        public OVRInput.Button selectionButton = OVRInput.Button.PrimaryIndexTrigger;
+
+        [Header("Other Settings")]
 
         /// <summary>
         /// The bezier curve that projects the path for teleporting.
         /// </summary>
+        [Tooltip("A bezier curve object.")]
         public Bezier bezier;
 
         /// <summary>
         /// Teleport sprite indicating where the player will land.
         /// </summary>
+        [Tooltip("The teleport landing sprite (pad, cursor, etc).")]
         public GameObject teleportSprite;
 
-        private bool teleportEnabled;
-        private bool firstClick;
-        private float firstClickTime;
-        private float doubleClickTimeLimit = 0.5f;
+        public bool TeleportEnabled
+        {
+            get { return _teleportEnabled; }
+        }
 
+        private bool _teleportEnabled;
+        private bool _firstClick;
+        private float _firstClickTime;
+        private float doubleClickTimeLimit = 0.5f;
 
 
         void Start()
         {
-            teleportEnabled = false;
-            firstClick = false;
-            firstClickTime = 0f;
+            _teleportEnabled = false;
+            _firstClick = false;
+            _firstClickTime = 0f;
             teleportSprite.SetActive(false);
         }
 
@@ -53,9 +66,8 @@ namespace VarLab.Teleport
         {
             UpdateTeleportEnabled();
 
-            if (teleportEnabled)
+            if (_teleportEnabled)
             {
-                //HandleBezier();
                 HandleTeleport();
             }
         }
@@ -70,21 +82,21 @@ namespace VarLab.Teleport
             // --> This enables teleportation mode
             if (OVRInput.GetDown(OVRInput.Button.Four))
             {
-                if (!firstClick)
+                if (!_firstClick)
                 { // The first click is detected.
-                    firstClick = true;
-                    firstClickTime = Time.unscaledTime; // Store the time when click occurs
+                    _firstClick = true;
+                    _firstClickTime = Time.unscaledTime; // Store the time when click occurs
                 }
                 else
                 { // The second click detected, so toggle teleport mode.
-                    firstClick = false;
+                    _firstClick = false;
                     ToggleTeleportMode();
                 }
             }
 
-            if (Time.unscaledTime - firstClickTime > doubleClickTimeLimit)
+            if (Time.unscaledTime - _firstClickTime > doubleClickTimeLimit)
             { // Time for the double click has run out.
-                firstClick = false;
+                _firstClick = false;
             }
         }
 
@@ -100,7 +112,7 @@ namespace VarLab.Teleport
                 teleportSprite.SetActive(true);
                 teleportSprite.transform.position = bezier.EndPoint;
 
-                if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch))
+                if (OVRInput.GetDown(selectionButton))
                 {
                     // Teleport to the position.
                     TeleportToPosition(bezier.EndPoint);
@@ -129,25 +141,12 @@ namespace VarLab.Teleport
         /// </summary>
         void ToggleTeleportMode()
         {
-            teleportEnabled = !teleportEnabled;
-            bezier.ToggleDraw(teleportEnabled);
-            if (!teleportEnabled)
+            _teleportEnabled = !_teleportEnabled;
+            bezier.ToggleDraw(_teleportEnabled);
+            if (!_teleportEnabled)
             {
                 teleportSprite.SetActive(false);
             }
         }
-
-
-        // Optional: use the touchpad to move the teleport point closer or further.
-        //void HandleBezier()
-        //{
-        //    Vector2 touchCoords = OVRInput.Get(OVRInput.Axis2D.PrimaryTouchpad);
-
-        //    if (Mathf.Abs(touchCoords.y) > 0.8f) {
-        //        bezier.ExtensionFactor = touchCoords.y > 0f ? 1f : -1f;
-        //    } else {
-        //        bezier.ExtensionFactor = 0f;
-        //    }
-        //}
     }
 }
