@@ -17,7 +17,7 @@ namespace VarLab.Teleport
     /// Modified by: Austin Che
     /// Modified on: June 28, 2018
     /// </summary>
-    public class Teleport : MonoBehaviour
+    public class TeleportController : MonoBehaviour
     {
         public bool TeleportEnabled
         {
